@@ -1,0 +1,96 @@
+﻿using System;
+using System.Web;
+
+namespace Ministry.SimpleTwitterStream.Models
+{
+    /// <summary>
+    /// A representation of a tweet
+    /// </summary>
+    public class Tweet
+    {
+
+        #region | Properties |
+
+        /// <summary>
+        /// Gets or sets the author.
+        /// </summary>
+        /// <value>
+        /// The author.
+        /// </value>
+        public string Author { get; set; }
+
+        /// <summary>
+        /// Gets or sets the handle.
+        /// </summary>
+        /// <value>
+        /// The handle.
+        /// </value>
+        public string Handle { get; set; }
+
+        /// <summary>
+        /// Gets or sets the avatar URL.
+        /// </summary>
+        /// <value>
+        /// The avatar URL.
+        /// </value>
+        public string AvatarUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the text.
+        /// </summary>
+        /// <value>
+        /// The text.
+        /// </value>
+        public string Text { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="Tweet"/> is a retweet.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if a retweet; otherwise, <c>false</c>.
+        /// </value>
+        public bool Retweet { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the user the tweet was retweeted by.
+        /// </summary>
+        /// <value>
+        /// The user the tweet was retweeted by.
+        /// </value>
+        public string RetweetedBy { get; set; }
+
+        /// <summary>
+        /// Gets or sets the handle of the user the tweet was retweeted by.
+        /// </summary>
+        /// <value>
+        /// The retweeted by handle.
+        /// </value>
+        public string RetweetedByHandle { get; set; }
+
+        /// <summary>
+        /// Gets or sets the date the tweet was created.
+        /// </summary>
+        /// <value>
+        /// The date created.
+        /// </value>
+        public DateTime DateCreated { get; set; }
+
+        /// <summary>
+        /// Gets or sets the date the tweet was retweeted.
+        /// </summary>
+        /// <value>
+        /// The date retweeted.
+        /// </value>
+        public DateTime? DateRetweeted { get; set; }
+
+        /// <summary>
+        /// Returns the tweet text as markup.
+        /// </summary>
+        /// <returns>An HTML formatted text.</returns>
+        public HtmlString Markup { get; set; }
+
+
+        #endregion
+
+    }
+}
