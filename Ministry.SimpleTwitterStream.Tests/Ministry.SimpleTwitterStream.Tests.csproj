@@ -78,6 +78,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigData.cs" />
     <Compile Include="Models\TweetBuilderTests.cs" />
     <Compile Include="Models\TweetListBuilderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
