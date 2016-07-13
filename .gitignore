@@ -159,3 +159,6 @@ $RECYCLE.BIN/
 /packages/
 */bin
 deploy/*.nupkg
+
+# block keys and secrets being committed
+ConfigData.cs
