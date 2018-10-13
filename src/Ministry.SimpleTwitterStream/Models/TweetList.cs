@@ -11,12 +11,12 @@
 // FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.Web;
 
 namespace Ministry.SimpleTwitterStream.Models
 {
+    #region | Interface |
+
     /// <summary>
     /// A representation of a stream of tweets
     /// </summary>
@@ -38,6 +38,8 @@ namespace Ministry.SimpleTwitterStream.Models
         /// </value>
         IReadOnlyCollection<string> SecondaryHandles { get; }
     }
+
+    #endregion
 
     /// <summary>
     /// A representation of a stream of tweets
@@ -69,16 +71,13 @@ namespace Ministry.SimpleTwitterStream.Models
 
         #endregion
 
-
-        #region | Properties |
-
         /// <summary>
         /// Gets the master handle.
         /// </summary>
         /// <value>
         /// The master handle.
         /// </value>
-        public string MasterHandle { get; private set; }
+        public string MasterHandle { get; }
 
         /// <summary>
         /// Gets the secondary handles.
@@ -86,9 +85,6 @@ namespace Ministry.SimpleTwitterStream.Models
         /// <value>
         /// The secondary handles.
         /// </value>
-        public IReadOnlyCollection<string> SecondaryHandles { get; private set; }
-
-        #endregion
-
+        public IReadOnlyCollection<string> SecondaryHandles { get; }
     }
 }

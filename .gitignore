@@ -162,3 +162,4 @@ deploy/*.nupkg
 
 # block keys and secrets being committed
 ConfigData.cs
+.vs/*

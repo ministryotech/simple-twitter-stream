@@ -18,6 +18,8 @@ using System.Linq;
 
 namespace Ministry.SimpleTwitterStream.Models
 {
+    #region | Interface |
+
     /// <summary>
     /// A factory for a Twitter stream
     /// </summary>
@@ -34,8 +36,7 @@ namespace Ministry.SimpleTwitterStream.Models
         /// <summary>
         /// Builds the twitter stream for a handle.
         /// </summary>
-        /// <param name="masterHandle">The master handle.</param>
-        /// <param name="otherHandles">The other handles.</param>
+        /// <param name="handle">The handle.</param>
         /// <returns>
         /// The tweets.
         /// </returns>
@@ -52,15 +53,17 @@ namespace Ministry.SimpleTwitterStream.Models
         ITweetList BuildForHandles(string masterHandle, string[] otherHandles);
     }
 
+    #endregion
+
     /// <summary>
     /// A factory for a Twitter stream
     /// </summary>
     public class TweetListBuilder : ITweetListBuilder
     {
-        private readonly ITwitterLocalCacheGateway _localCacheGateway;
-        private readonly ITwitterConfig _twitterConfig;
-        private readonly ITweetBuilder _tweetBuilder;
-        private readonly ITwitterApiGateway _twitterApiGateway;
+        private readonly ITwitterLocalCacheGateway localCacheGateway;
+        private readonly ITwitterConfig twitterConfig;
+        private readonly ITweetBuilder tweetBuilder;
+        private readonly ITwitterApiGateway twitterApiGateway;
 
         #region | Construction |
 
@@ -69,23 +72,21 @@ namespace Ministry.SimpleTwitterStream.Models
         /// </summary>
         /// <param name="twitterConfig">The configuration reader.</param>
         /// <param name="localCacheGateway">State of the application.</param>
-        /// <param name="timeProvider">The time provider.</param>
+        /// <param name="twitterApiGateway">The twitter API gateway.</param>
         /// <param name="tweetBuilder">The tweet builder.</param>
         public TweetListBuilder(ITwitterConfig twitterConfig, ITwitterLocalCacheGateway localCacheGateway, ITwitterApiGateway twitterApiGateway, ITweetBuilder tweetBuilder)
         {
-            _localCacheGateway = localCacheGateway;
-            _tweetBuilder = tweetBuilder;
-            _twitterApiGateway = twitterApiGateway;
-            _twitterConfig = twitterConfig;
+            this.localCacheGateway = localCacheGateway;
+            this.tweetBuilder = tweetBuilder;
+            this.twitterApiGateway = twitterApiGateway;
+            this.twitterConfig = twitterConfig;
 
             TweetCount = twitterConfig.TweetCount > 0 ? twitterConfig.TweetCount : 5;
-            _twitterApiGateway.TwitterRateLimitHit = _localCacheGateway.TwitterRateLimitHit;
-            _twitterApiGateway.TwitterRateLimitResetsOn = _localCacheGateway.TwitterRateLimitResetsOn;
+            this.twitterApiGateway.TwitterRateLimitHit = this.localCacheGateway.TwitterRateLimitHit;
+            this.twitterApiGateway.TwitterRateLimitResetsOn = this.localCacheGateway.TwitterRateLimitResetsOn;
         }
 
         #endregion
-
-        #region | Properties |
 
         /// <summary>
         /// Gets or sets the tweet count.
@@ -95,25 +96,21 @@ namespace Ministry.SimpleTwitterStream.Models
         /// </value>
         public int TweetCount { get; set; }
 
-        #endregion
-
         /// <summary>
         /// Builds the twitter stream using twitter config data.
         /// </summary>
         /// <returns>
         /// The tweets.
         /// </returns>
-        public ITweetList Build()
-        {
-            return _twitterConfig.SecondaryHandles.Any() ? BuildForHandles(_twitterConfig.MasterHandle, _twitterConfig.SecondaryHandles)
-                                                        : BuildForHandle(_twitterConfig.MasterHandle);
-        }
+        public ITweetList Build() 
+            => twitterConfig.SecondaryHandles.Any() 
+                ? BuildForHandles(twitterConfig.MasterHandle, twitterConfig.SecondaryHandles)
+                : BuildForHandle(twitterConfig.MasterHandle);
 
         /// <summary>
         /// Builds the twitter stream for a handle.
         /// </summary>
-        /// <param name="masterHandle">The master handle.</param>
-        /// <param name="otherHandles">The other handles.</param>
+        /// <param name="handle">The handle.</param>
         /// <returns>
         /// The tweets.
         /// </returns>
@@ -124,11 +121,7 @@ namespace Ministry.SimpleTwitterStream.Models
 
             LoadTweetsForHandle(tweets, handle);
 
-            foreach (var tweet in tweets.OrderByDescending(tweet => tweet.CreatedAt).Take(TweetCount))
-            {
-                result.Add(_tweetBuilder.Build(tweet));
-            }
-
+            result.AddRange(tweets.OrderByDescending(tweet => tweet.CreatedAt).Take(TweetCount).Select(tweet => tweetBuilder.Build(tweet)));
             return result;
         }
 
@@ -152,11 +145,7 @@ namespace Ministry.SimpleTwitterStream.Models
                 LoadTweetsForHandle(tweets, handle, false);
             }
 
-            foreach (var tweet in tweets.OrderByDescending(tweet => tweet.CreatedAt).Take(TweetCount))
-            {
-                result.Add(_tweetBuilder.Build(tweet));
-            }
-
+            result.AddRange(tweets.OrderByDescending(tweet => tweet.CreatedAt).Take(TweetCount).Select(tweet => tweetBuilder.Build(tweet)));
             return result;
         }
 
@@ -172,21 +161,21 @@ namespace Ministry.SimpleTwitterStream.Models
         {
             try
             {
-                if (_twitterApiGateway.TwitterRateLimitResetsOn < DateTime.Now) _twitterApiGateway.TwitterRateLimitHit = false;
+                if (twitterApiGateway.TwitterRateLimitResetsOn < DateTime.Now) twitterApiGateway.TwitterRateLimitHit = false;
 
-                if (!_twitterApiGateway.TwitterRateLimitHit)
+                if (!twitterApiGateway.TwitterRateLimitHit)
                 {
-                    var newTweets = GetTweetsForHandleFromGateway(_twitterApiGateway, handle, includeRetweets);
+                    var newTweets = GetTweetsForHandleFromGateway(twitterApiGateway, handle, includeRetweets);
 
-                    _localCacheGateway.TwitterRateLimitHit = _twitterApiGateway.TwitterRateLimitHit;
-                    _localCacheGateway.TwitterRateLimitResetsOn = _twitterApiGateway.TwitterRateLimitResetsOn;
-                    _localCacheGateway.SaveTweetsForHandle(handle, newTweets);
+                    localCacheGateway.TwitterRateLimitHit = twitterApiGateway.TwitterRateLimitHit;
+                    localCacheGateway.TwitterRateLimitResetsOn = twitterApiGateway.TwitterRateLimitResetsOn;
+                    localCacheGateway.SaveTweetsForHandle(handle, newTweets);
 
                     tweets.AddRange(newTweets);
                 }
                 else
                 {
-                    var newTweets = GetTweetsForHandleFromGateway(_localCacheGateway, handle, includeRetweets);
+                    var newTweets = GetTweetsForHandleFromGateway(localCacheGateway, handle, includeRetweets);
                     if (newTweets != null) tweets.AddRange(newTweets);
                 }
             }
@@ -195,7 +184,7 @@ namespace Ministry.SimpleTwitterStream.Models
                 // Try loading from local storage
                 try
                 {
-                    var newTweets = GetTweetsForHandleFromGateway(_localCacheGateway, handle, includeRetweets);
+                    var newTweets = GetTweetsForHandleFromGateway(localCacheGateway, handle, includeRetweets);
                     if (newTweets != null) tweets.AddRange(newTweets);
                 }
                 catch { }
@@ -209,17 +198,10 @@ namespace Ministry.SimpleTwitterStream.Models
         /// <param name="handle">The handle.</param>
         /// <param name="includeRetweets">if set to <c>true</c> [include retweets].</param>
         /// <returns>The tweet statuses</returns>
-        private IList<Status> GetTweetsForHandleFromGateway(ITwitterGateway gateway, string handle, bool includeRetweets)
-        {
-            if (includeRetweets)
-            {
-                return gateway.GetTweetsForHandle(handle, TweetCount);
-            }
-            else
-            {
-                return gateway.GetTweetsForHandle(handle, TweetCount).Where(tweet => !tweet.Text.StartsWith("RT")).ToList();
-            }
-        }
+        private IList<Status> GetTweetsForHandleFromGateway(ITwitterGateway gateway, string handle, bool includeRetweets) 
+            => includeRetweets 
+                ? gateway.GetTweetsForHandle(handle, TweetCount) 
+                : gateway.GetTweetsForHandle(handle, TweetCount).Where(tweet => !tweet.Text.StartsWith("RT")).ToList();
 
         #endregion
     }

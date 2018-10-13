@@ -15,24 +15,28 @@ using LinqToTwitter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ministry.SimpleTwitterStream.Models;
 
 namespace Ministry.SimpleTwitterStream
 {
+    #region | Interface |
+
     /// <summary>
     /// A factory for a Twitter stream
     /// </summary>
     public interface ITwitterApiGateway : ITwitterGateway
     { }
 
+    #endregion
+
     /// <summary>
     /// A factory for a Twitter stream
     /// </summary>
     public class TwitterApiGateway : ITwitterApiGateway
     {
-        private readonly ITwitterConfig _twitterConfig;
-        private readonly ITimeProvider _timeProvider;
-        private readonly SingleUserAuthorizer _auth;
-        private TwitterContext _context;
+        private readonly ITwitterConfig twitterConfig;
+        private readonly IDateTimeAccessor dateTimeAccessor;
+        private readonly TwitterContext context;
 
         #region | Construction |
 
@@ -40,12 +44,13 @@ namespace Ministry.SimpleTwitterStream
         /// Initializes a new instance of the <see cref="TweetListBuilder" /> class.
         /// </summary>
         /// <param name="twitterConfig">The configuration reader.</param>
-        public TwitterApiGateway(ITwitterConfig twitterConfig, ITimeProvider timeProvider)
+        /// <param name="dateTimeAccessor">The date time accessor.</param>
+        public TwitterApiGateway(ITwitterConfig twitterConfig, IDateTimeAccessor dateTimeAccessor)
         {
-            _twitterConfig = twitterConfig;
-            _timeProvider = timeProvider;
-            _auth = GetAuthorizer();
-            _context = new TwitterContext(_auth);
+            this.twitterConfig = twitterConfig;
+            this.dateTimeAccessor = dateTimeAccessor;
+
+            context = new TwitterContext(GetAuthorizer());
         }
 
         #endregion
@@ -74,22 +79,18 @@ namespace Ministry.SimpleTwitterStream
         /// <returns></returns>
         public IList<Status> GetTweetsForHandle(string handle, int tweetCount = 20)
         {
-            var tweetsTask = (from tweet in _context.Status
+            var tweetsTask = (from tweet in context.Status
                                 where tweet.Type == StatusType.User &&
                                 tweet.ScreenName == handle
                                 select tweet).Take(tweetCount).ToListAsync();
-            tweetsTask.Wait(_twitterConfig.TwitterTimeout);
+            tweetsTask.Wait(twitterConfig.TwitterTimeout);
+            
+            TwitterRateLimitHit = context.RateLimitRemaining < 2;
 
-            var result =  tweetsTask.Result;
+            if (TwitterRateLimitResetsOn <= dateTimeAccessor.Now)
+                TwitterRateLimitResetsOn = dateTimeAccessor.Now.AddMinutes(15);
 
-            TwitterRateLimitHit = _context.RateLimitRemaining < 2;
-
-            if (TwitterRateLimitResetsOn <= _timeProvider.Now)
-            {
-                TwitterRateLimitResetsOn = _timeProvider.Now.AddMinutes(15);
-            }
-
-            return result;
+            return tweetsTask.Result;
         }
 
         #region | Private Methods |
@@ -98,19 +99,17 @@ namespace Ministry.SimpleTwitterStream
         /// Gets the authorizer.
         /// </summary>
         /// <returns>A Twitter authorizer</returns>
-        private SingleUserAuthorizer GetAuthorizer()
-        {
-            return new SingleUserAuthorizer
+        private SingleUserAuthorizer GetAuthorizer() 
+            => new SingleUserAuthorizer
             {
                 CredentialStore = new SingleUserInMemoryCredentialStore
                 {
-                    ConsumerKey = _twitterConfig.ConsumerKey,
-                    ConsumerSecret = _twitterConfig.ConsumerSecret,
-                    AccessToken = _twitterConfig.AccessToken,
-                    AccessTokenSecret = _twitterConfig.AccessTokenSecret
+                    ConsumerKey = twitterConfig.ConsumerKey,
+                    ConsumerSecret = twitterConfig.ConsumerSecret,
+                    AccessToken = twitterConfig.AccessToken,
+                    AccessTokenSecret = twitterConfig.AccessTokenSecret
                 }
             };
-        }
 
         #endregion
     }

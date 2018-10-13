@@ -11,7 +11,6 @@
 // FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Ministry.SimpleTwitterStream.Models;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -25,8 +24,7 @@ namespace Ministry.SimpleTwitterStream.Tests
     {
         private Mock<ITwitterConfig> mockTwitterConfig;
         private Mock<ITwitterLocalCacheGateway> mockLocalCache;
-        private Mock<ITimeProvider> mockTimeProvider;
-        private Mock<ITweetBuilder> mockTweetBuilder;
+        private Mock<IDateTimeAccessor> mockTimeProvider;
 
         #region | Setup and TearDown |
 
@@ -42,10 +40,8 @@ namespace Ministry.SimpleTwitterStream.Tests
             mockLocalCache = new Mock<ITwitterLocalCacheGateway>();
             mockLocalCache.SetupAllProperties();
 
-            mockTimeProvider = new Mock<ITimeProvider>();
+            mockTimeProvider = new Mock<IDateTimeAccessor>();
             mockTimeProvider.Setup(tp => tp.Now).Returns(DateTime.Now);
-
-            mockTweetBuilder = new Mock<ITweetBuilder>();
         }
 
         [TearDown]
@@ -54,7 +50,6 @@ namespace Ministry.SimpleTwitterStream.Tests
             mockTwitterConfig = null;
             mockLocalCache = null;
             mockTimeProvider = null;
-            mockTweetBuilder = null;
         }
 
         #endregion
@@ -78,7 +73,7 @@ namespace Ministry.SimpleTwitterStream.Tests
         [Category("API Integration")]
         public void GettingATwitterStreamWithValidAuthorizationReturnsTweets()
         {
-            var testHandle = "ministryotech";
+            const string testHandle = "ministryotech";
 
             var objUt = new TwitterApiGateway(mockTwitterConfig.Object, mockTimeProvider.Object);
             var result = objUt.GetTweetsForHandle(testHandle, 6);
@@ -96,10 +91,10 @@ namespace Ministry.SimpleTwitterStream.Tests
         [Category("API Integration")]
         public void GettingATwitterStreamWithValidAuthorizationExposesTheRateLimitState()
         {
-            var testHandle = "ministryotech";
+            const string testHandle = "ministryotech";
 
             var objUt = new TwitterApiGateway(mockTwitterConfig.Object, mockTimeProvider.Object);
-            var result = objUt.GetTweetsForHandle(testHandle);
+            objUt.GetTweetsForHandle(testHandle);
 
             Assert.That(objUt.TwitterRateLimitResetsOn > mockTimeProvider.Object.Now);
         }
@@ -108,14 +103,16 @@ namespace Ministry.SimpleTwitterStream.Tests
         [Category("API Integration")]
         public void TheRateLimitResetTimeIsUpdatedIfTheResetTimeIsCurrentlyLessThanNow()
         {
-            var testHandle = "ministryotech";
+            const string testHandle = "ministryotech";
             var testTime = mockTimeProvider.Object.Now.Subtract(new TimeSpan(1, 0, 0));
 
-            var objUt = new TwitterApiGateway(mockTwitterConfig.Object, mockTimeProvider.Object);
-            objUt.TwitterRateLimitHit = false;
-            objUt.TwitterRateLimitResetsOn = testTime;
+            var objUt = new TwitterApiGateway(mockTwitterConfig.Object, mockTimeProvider.Object)
+            {
+                TwitterRateLimitHit = false,
+                TwitterRateLimitResetsOn = testTime
+            };
 
-            var result = objUt.GetTweetsForHandle(testHandle);
+            objUt.GetTweetsForHandle(testHandle);
 
             Assert.That(objUt.TwitterRateLimitResetsOn > testTime);
             Assert.AreEqual(mockTimeProvider.Object.Now.AddMinutes(15), objUt.TwitterRateLimitResetsOn);
@@ -125,14 +122,16 @@ namespace Ministry.SimpleTwitterStream.Tests
         [Category("API Integration")]
         public void TheRateLimitResetTimeIsNotUpdatedIfTheResetTimeIsCurrentlyMoreThanNow()
         {
-            var testHandle = "ministryotech";
+            const string testHandle = "ministryotech";
             var testTime = mockTimeProvider.Object.Now.AddMinutes(5);
 
-            var objUt = new TwitterApiGateway(mockTwitterConfig.Object, mockTimeProvider.Object);
-            objUt.TwitterRateLimitHit = false;
-            objUt.TwitterRateLimitResetsOn = testTime;
+            var objUt = new TwitterApiGateway(mockTwitterConfig.Object, mockTimeProvider.Object)
+            {
+                TwitterRateLimitHit = false,
+                TwitterRateLimitResetsOn = testTime
+            };
 
-            var result = objUt.GetTweetsForHandle(testHandle);
+            objUt.GetTweetsForHandle(testHandle);
 
             Assert.AreEqual(testTime, objUt.TwitterRateLimitResetsOn);
         }

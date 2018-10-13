@@ -12,7 +12,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Web;
 
 namespace Ministry.SimpleTwitterStream.Models
 {
@@ -21,9 +20,6 @@ namespace Ministry.SimpleTwitterStream.Models
     /// </summary>
     public class Tweet
     {
-
-        #region | Properties |
-
         /// <summary>
         /// Gets or sets the author.
         /// </summary>
@@ -100,10 +96,6 @@ namespace Ministry.SimpleTwitterStream.Models
         /// Returns the tweet text as markup.
         /// </summary>
         /// <returns>An HTML formatted text.</returns>
-        public HtmlString Markup { get; set; }
-
-
-        #endregion
-
+        public string Markup { get; set; }
     }
 }

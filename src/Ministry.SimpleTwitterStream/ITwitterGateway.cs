@@ -43,7 +43,6 @@ namespace Ministry.SimpleTwitterStream
         /// </summary>
         /// <param name="handle">The handle.</param>
         /// <param name="tweetCount">The tweet count.</param>
-        /// <param name="includeRetweets">if set to <c>true</c> includes retweets.</param>
         /// <returns></returns>
         IList<Status> GetTweetsForHandle(string handle, int tweetCount = 20);
     }
