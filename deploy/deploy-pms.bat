@@ -6,7 +6,8 @@ del *.nupkg
 pause
 
 ECHO Publishing to NuGet...
-nuget pack ..\Ministry.SimpleTwitterStream\Ministry.SimpleTwitterStream.csproj -Prop Configuration=Release
+nuget pack ..\src\Ministry.SimpleTwitterStream\Ministry.SimpleTwitterStream.csproj -Prop Configuration=Release
+nuget pack ..\src\Ministry.SimpleTwitterStream.Cache\Ministry.SimpleTwitterStream.Cache.csproj -Prop Configuration=Release
 nuget push *.nupkg
 
 pause
