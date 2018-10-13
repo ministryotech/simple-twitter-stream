@@ -11,35 +11,39 @@
 // FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using LinqToTwitter;
 using System;
+using System.Collections.Generic;
 
 namespace Ministry.SimpleTwitterStream
 {
     /// <summary>
-    /// Wrapper for Times
+    /// A factory for a Twitter stream
     /// </summary>
-    public interface ITimeProvider
+    public interface ITwitterGateway
     {
         /// <summary>
-        /// Gets the current time.
+        /// Gets or sets a value indicating whether the Twitter rate limit has been hit.
         /// </summary>
         /// <value>
-        /// The current time.
+        /// <c>true</c> if the Twitter rate limit has been hit; otherwise, <c>false</c>.
         /// </value>
-        DateTime Now { get; }
-    }
+        bool TwitterRateLimitHit { get; set; }
 
-    /// <summary>
-    /// Wrapper for Times
-    /// </summary>
-    public class TimeProvider : ITimeProvider
-    {
         /// <summary>
-        /// Gets the current time.
+        /// Gets or sets the twitter rate limit resets on.
         /// </summary>
         /// <value>
-        /// The current time.
+        /// The twitter rate limit resets on.
         /// </value>
-        public DateTime Now { get { return DateTime.Now; } }
+        DateTime TwitterRateLimitResetsOn { get; set; }
+
+        /// <summary>
+        /// Gets Tweets for a specific handle.
+        /// </summary>
+        /// <param name="handle">The handle.</param>
+        /// <param name="tweetCount">The tweet count.</param>
+        /// <returns></returns>
+        IList<Status> GetTweetsForHandle(string handle, int tweetCount = 20);
     }
 }

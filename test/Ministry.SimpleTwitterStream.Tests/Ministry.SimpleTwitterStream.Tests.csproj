@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <Authors>Keith Jackson</Authors>
+    <Company>The Ministry of Technology</Company>
+    <Description>Tests for Simple Twitter Stream.</Description>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Copyright>2018 Minotech Ltd.</Copyright>
+    <RepositoryUrl>https://github.com/ministryotech/simple-twitter-stream.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <OutputTypeEx>exe</OutputTypeEx>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Ministry.SimpleTwitterStream\Ministry.SimpleTwitterStream.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="Microsoft.DotNet.InternalAbstractions" Version="1.0.0" />
+    <PackageReference Include="Ministry.DateTimeAccessor" Version="1.0.0" />
+    <PackageReference Include="Moq" Version="4.10.0" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="System.Linq.Queryable" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+</Project>
+  
+  

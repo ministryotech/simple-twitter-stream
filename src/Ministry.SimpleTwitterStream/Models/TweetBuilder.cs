@@ -11,13 +11,15 @@
 // FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using LinqToTwitter;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace Ministry.SimpleTwitterStream.Models
 {
+    #region | Interface |
+
     /// <summary>
     /// A factory for a Twitter stream
     /// </summary>
@@ -30,6 +32,8 @@ namespace Ministry.SimpleTwitterStream.Models
         /// <returns>A tweet instance.</returns>
         Tweet Build(Status statusUpdate);
     }
+
+    #endregion
 
     /// <summary>
     /// A factory for a Twitter stream
@@ -53,20 +57,18 @@ namespace Ministry.SimpleTwitterStream.Models
                     Handle = statusUpdate.User.ScreenNameResponse,
                     Text = statusUpdate.Text,
                     DateCreated = statusUpdate.CreatedAt,
-                    AvatarUrl = statusUpdate.User.ProfileImageUrl != null ? statusUpdate.User.ProfileImageUrl.Remove(0, 5) : string.Empty,
-                    Markup = new HtmlString(GetMarkup(statusUpdate))
+                    AvatarUrl = statusUpdate.User.ProfileImageUrl?.Remove(0, 5) ?? string.Empty,
+                    Markup = GetMarkup(statusUpdate)
                 };
             }
-            else
-            {
-                var retweetedTweet = Build(statusUpdate.RetweetedStatus) as Tweet;
-                retweetedTweet.Retweet = true;
-                retweetedTweet.RetweetedBy = statusUpdate.User.Name;
-                retweetedTweet.RetweetedByHandle = statusUpdate.User.ScreenNameResponse;
-                retweetedTweet.DateRetweeted = statusUpdate.CreatedAt;
 
-                return retweetedTweet;
-            }
+            var retweetedTweet = Build(statusUpdate.RetweetedStatus);
+            retweetedTweet.Retweet = true;
+            retweetedTweet.RetweetedBy = statusUpdate.User.Name;
+            retweetedTweet.RetweetedByHandle = statusUpdate.User.ScreenNameResponse;
+            retweetedTweet.DateRetweeted = statusUpdate.CreatedAt;
+
+            return retweetedTweet;
         }
 
         #region | Private Methods |
@@ -87,7 +89,7 @@ namespace Ministry.SimpleTwitterStream.Models
         /// <summary>
         /// Processes the links.
         /// </summary>
-        /// <param name="input">The input.</param>
+        /// <param name="statusUpdate">The status update.</param>
         /// <returns></returns>
         private string ProcessLinks(Status statusUpdate)
         {
@@ -96,20 +98,20 @@ namespace Ministry.SimpleTwitterStream.Models
             GetSpecialItemRecursive("http://", statusUpdate.Text, ref links);
             GetSpecialItemRecursive("https://", statusUpdate.Text, ref links);
 
-            string retVal = statusUpdate.Text;
+            var retVal = statusUpdate.Text;
 
             foreach (var link in links)
             {
                 UrlEntity entity = null;
 
-                if (statusUpdate.Entities != null && statusUpdate.Entities.UrlEntities != null)
+                if (statusUpdate.Entities?.UrlEntities != null)
                 {
                     entity = (from urlEntity in statusUpdate.Entities.UrlEntities
                               where urlEntity.Url == link
                               select urlEntity).FirstOrDefault();
                 }
 
-                retVal = (entity != null) ? retVal.Replace(link, "<a href=\"" + entity.ExpandedUrl + "\" target=\"_blank\">" + entity.DisplayUrl + "</a>")
+                retVal = entity != null ? retVal.Replace(link, "<a href=\"" + entity.ExpandedUrl + "\" target=\"_blank\">" + entity.DisplayUrl + "</a>")
                                           : retVal.Replace(link, "<a href=\"" + link + "\" target=\"_blank\">(more)</a>");
             }
 
@@ -124,15 +126,9 @@ namespace Ministry.SimpleTwitterStream.Models
         private string ProcessHashTags(string input)
         {
             var tags = new List<string>();
-
             GetSpecialItemRecursive("#", input, ref tags);
 
-            foreach (var tag in tags)
-            {
-                input = input.Replace(tag, "<a href=\"https://twitter.com/hashtag/" + tag.Substring(1) + "?src=hash\" target=\"_blank\">" + tag + "</a>");
-            }
-
-            return input;
+            return tags.Aggregate(input, (current, tag) => current.Replace(tag, "<a href=\"https://twitter.com/hashtag/" + tag.Substring(1) + "?src=hash\" target=\"_blank\">" + tag + "</a>"));
         }
 
         /// <summary>
@@ -145,23 +141,18 @@ namespace Ministry.SimpleTwitterStream.Models
             var mentions = new List<string>();
 
             GetSpecialItemRecursive("@", input, ref mentions);
-
-            foreach (var mention in mentions)
-            {
-                input = input.Replace(mention, "<a href=\"https://twitter.com/" + mention.Substring(1) + "\" target=\"_blank\">" + mention + "</a>");
-            }
-
-            return input;
+            return mentions.Aggregate(input, (current, mention) => current.Replace(mention, "<a href=\"https://twitter.com/" + mention.Substring(1) + "\" target=\"_blank\">" + mention + "</a>"));
         }
 
         /// <summary>
         /// Gets the mention.
         /// </summary>
+        /// <param name="itemKey">The item key.</param>
         /// <param name="input">The input.</param>
-        /// <returns></returns>
+        /// <param name="items">The items.</param>
         private void GetSpecialItemRecursive(string itemKey, string input, ref List<string> items)
         {
-            var nextItemIndex = input.IndexOf(itemKey);
+            var nextItemIndex = input.IndexOf(itemKey, StringComparison.Ordinal);
 
             if (nextItemIndex == -1) return;
 
