@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ministry.SimpleTwitterStream", "Ministry.SimpleTwitterStream\Ministry.SimpleTwitterStream.csproj", "{AE6A06C6-FD63-4DD3-BB4F-410855A54FA1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ministry.SimpleTwitterStream", "src\Ministry.SimpleTwitterStream\Ministry.SimpleTwitterStream.csproj", "{AE6A06C6-FD63-4DD3-BB4F-410855A54FA1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CA25F418-3BE1-408B-B2B0-8BDF3F62BEC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ministry.SimpleTwitterStream.Tests", "Ministry.SimpleTwitterStream.Tests\Ministry.SimpleTwitterStream.Tests.csproj", "{349382F4-65ED-4A2B-900B-DF8E78FF83CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ministry.SimpleTwitterStream.Tests", "test\Ministry.SimpleTwitterStream.Tests\Ministry.SimpleTwitterStream.Tests.csproj", "{349382F4-65ED-4A2B-900B-DF8E78FF83CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
