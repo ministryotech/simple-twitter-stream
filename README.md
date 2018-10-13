@@ -1,5 +1,5 @@
 # Simple Twitter Stream #
-This library is designed to provide a simple, stromgly typed, twitter feed. It sits on top of the LinqToTwitter library.
+This library is designed to provide a simple, strongly typed, twitter feed. It sits on top of the LinqToTwitter library.
 
 # Configuration #
 In order to be able to use the library to load your feed you need to provide configuration. You can do this however you want, the library is non-prescriptive about it, but you need to wire in your configuration by creating an implementation of **ITwitterConfig**.
