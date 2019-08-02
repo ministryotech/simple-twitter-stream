@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ministry.SimpleTwitterStream.Tests.Models
+namespace Ministry.SimpleTwitterStream.NetFramework.Tests.Models
 {
     [TestFixture]
     [Category("Builder Test")]

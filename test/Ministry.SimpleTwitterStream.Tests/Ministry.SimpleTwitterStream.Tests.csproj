@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <Authors>Keith Jackson</Authors>
     <Company>The Ministry of Technology</Company>
     <Description>Tests for Simple Twitter Stream.</Description>

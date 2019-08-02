@@ -1,15 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2041
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ministry.SimpleTwitterStream", "src\Ministry.SimpleTwitterStream\Ministry.SimpleTwitterStream.csproj", "{AE6A06C6-FD63-4DD3-BB4F-410855A54FA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ministry.SimpleTwitterStream", "src\Ministry.SimpleTwitterStream\Ministry.SimpleTwitterStream.csproj", "{AE6A06C6-FD63-4DD3-BB4F-410855A54FA1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CA25F418-3BE1-408B-B2B0-8BDF3F62BEC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ministry.SimpleTwitterStream.Tests", "test\Ministry.SimpleTwitterStream.Tests\Ministry.SimpleTwitterStream.Tests.csproj", "{349382F4-65ED-4A2B-900B-DF8E78FF83CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ministry.SimpleTwitterStream.Tests", "test\Ministry.SimpleTwitterStream.Tests\Ministry.SimpleTwitterStream.Tests.csproj", "{349382F4-65ED-4A2B-900B-DF8E78FF83CC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ministry.SimpleTwitterStream.Cache", "src\Ministry.SimpleTwitterStream.Cache\Ministry.SimpleTwitterStream.Cache.csproj", "{E0B1B080-F0A5-4A1F-A336-297C78DEA74D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ministry.SimpleTwitterStream.NetFramework.Tests", "test\Ministry.SimpleTwitterStream.NetFramework.Tests\Ministry.SimpleTwitterStream.NetFramework.Tests.csproj", "{0671E4D9-7D9A-4B4E-B1BB-4859E1C0B2EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,12 +31,17 @@ Global
 		{E0B1B080-F0A5-4A1F-A336-297C78DEA74D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0B1B080-F0A5-4A1F-A336-297C78DEA74D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0B1B080-F0A5-4A1F-A336-297C78DEA74D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0671E4D9-7D9A-4B4E-B1BB-4859E1C0B2EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0671E4D9-7D9A-4B4E-B1BB-4859E1C0B2EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0671E4D9-7D9A-4B4E-B1BB-4859E1C0B2EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0671E4D9-7D9A-4B4E-B1BB-4859E1C0B2EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{349382F4-65ED-4A2B-900B-DF8E78FF83CC} = {CA25F418-3BE1-408B-B2B0-8BDF3F62BEC0}
+		{0671E4D9-7D9A-4B4E-B1BB-4859E1C0B2EF} = {CA25F418-3BE1-408B-B2B0-8BDF3F62BEC0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {40C4FBFD-17E5-422F-8349-9DCA2B9E18A4}
