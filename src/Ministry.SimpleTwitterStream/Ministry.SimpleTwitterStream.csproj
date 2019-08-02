@@ -6,18 +6,18 @@
     <Company>Minotech Ltd. (The Ministry of Technology)</Company>
     <Description>Library for providing access to a simple Twitter feed</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Copyright>2018 Minotech Ltd.</Copyright>
+    <Copyright>2019 Minotech Ltd.</Copyright>
     <RepositoryUrl>https://github.com/ministryotech/simple-twitter-stream.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <FileVersion>2.0.0.0</FileVersion>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
     <PackageLicenseUrl>http://www.opensource.org/licenses/MIT</PackageLicenseUrl>
     <PackageProjectUrl>http://www.minotech.co.uk/developers/open-source-projects/</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ministry.DateTimeAccessor" Version="1.0.0" />
+    <PackageReference Include="Ministry.DateTimeAccessor" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

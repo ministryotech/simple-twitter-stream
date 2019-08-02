@@ -179,7 +179,7 @@ namespace Ministry.SimpleTwitterStream.Models
                     if (newTweets != null) tweets.AddRange(newTweets);
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 // Try loading from local storage
                 try
@@ -187,7 +187,10 @@ namespace Ministry.SimpleTwitterStream.Models
                     var newTweets = GetTweetsForHandleFromGateway(localCacheGateway, handle, includeRetweets);
                     if (newTweets != null) tweets.AddRange(newTweets);
                 }
-                catch { }
+                catch
+                {
+                    throw ex;
+                }
             }
         }
 
