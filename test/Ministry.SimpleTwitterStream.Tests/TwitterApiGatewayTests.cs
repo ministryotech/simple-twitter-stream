@@ -56,7 +56,7 @@ namespace Ministry.SimpleTwitterStream.Tests
 
         [Test]
         [Category("API Integration")]
-        public void GettingATwitterStreamWithInvalidAuthorizationWillCauseTheMethodToFallOver()
+        public void GettingATwitterStreamWithInvalidAuthorizationWillReturnNoData()
         {
             mockTwitterConfig.Setup(cr => cr.TweetCount).Returns(3).Verifiable();
             mockTwitterConfig.Setup(cr => cr.AccessToken).Returns("AccessToken");
@@ -65,8 +65,9 @@ namespace Ministry.SimpleTwitterStream.Tests
             mockTwitterConfig.Setup(cr => cr.ConsumerSecret).Returns("ConsumerSecret");
 
             var objUt = new TwitterApiGateway(mockTwitterConfig.Object, mockTimeProvider.Object);
+            var result = objUt.GetTweetsForHandle("ministryotech");
 
-            Assert.Throws<AggregateException>(() => objUt.GetTweetsForHandle("ministryotech"));
+            Assert.IsEmpty(result);
         }
 
         [Test]
@@ -85,37 +86,6 @@ namespace Ministry.SimpleTwitterStream.Tests
             {
                 Assert.That(item.User.ScreenNameResponse == testHandle);
             }
-        }
-
-        [Test]
-        [Category("API Integration")]
-        public void GettingATwitterStreamWithValidAuthorizationExposesTheRateLimitState()
-        {
-            const string testHandle = "ministryotech";
-
-            var objUt = new TwitterApiGateway(mockTwitterConfig.Object, mockTimeProvider.Object);
-            objUt.GetTweetsForHandle(testHandle);
-
-            Assert.That(objUt.TwitterRateLimitResetsOn > mockTimeProvider.Object.Now);
-        }
-
-        [Test]
-        [Category("API Integration")]
-        public void TheRateLimitResetTimeIsUpdatedIfTheResetTimeIsCurrentlyLessThanNow()
-        {
-            const string testHandle = "ministryotech";
-            var testTime = mockTimeProvider.Object.Now.Subtract(new TimeSpan(1, 0, 0));
-
-            var objUt = new TwitterApiGateway(mockTwitterConfig.Object, mockTimeProvider.Object)
-            {
-                TwitterRateLimitHit = false,
-                TwitterRateLimitResetsOn = testTime
-            };
-
-            objUt.GetTweetsForHandle(testHandle);
-
-            Assert.That(objUt.TwitterRateLimitResetsOn > testTime);
-            Assert.AreEqual(mockTimeProvider.Object.Now.AddMinutes(15), objUt.TwitterRateLimitResetsOn);
         }
 
         [Test]

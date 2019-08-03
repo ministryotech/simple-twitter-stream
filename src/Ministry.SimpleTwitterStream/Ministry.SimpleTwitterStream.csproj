@@ -9,9 +9,9 @@
     <Copyright>2019 Minotech Ltd.</Copyright>
     <RepositoryUrl>https://github.com/ministryotech/simple-twitter-stream.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <FileVersion>2.0.0.0</FileVersion>
-    <Version>2.1.0</Version>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
+    <FileVersion>2.2.0.0</FileVersion>
+    <Version>2.2.0</Version>
     <PackageLicenseUrl>http://www.opensource.org/licenses/MIT</PackageLicenseUrl>
     <PackageProjectUrl>http://www.minotech.co.uk/developers/open-source-projects/</PackageProjectUrl>
   </PropertyGroup>

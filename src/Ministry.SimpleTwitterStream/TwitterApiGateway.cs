@@ -79,18 +79,27 @@ namespace Ministry.SimpleTwitterStream
         /// <returns></returns>
         public IList<Status> GetTweetsForHandle(string handle, int tweetCount = 20)
         {
-            var tweetsTask = (from tweet in context.Status
-                                where tweet.Type == StatusType.User &&
-                                tweet.ScreenName == handle
-                                select tweet).Take(tweetCount).ToListAsync();
-            tweetsTask.Wait(twitterConfig.TwitterTimeout);
-            
-            TwitterRateLimitHit = context.RateLimitRemaining < 2;
+            var tweetsResult = new List<Status>();
 
-            if (TwitterRateLimitResetsOn <= dateTimeAccessor.Now)
-                TwitterRateLimitResetsOn = dateTimeAccessor.Now.AddMinutes(15);
+            try
+            {
+                var tweetsTask = (from tweet in context.Status
+                    where tweet.Type == StatusType.User &&
+                          tweet.ScreenName == handle
+                    select tweet).Take(tweetCount).ToListAsync();
+                tweetsTask.Wait(twitterConfig.TwitterTimeout);
+                tweetsResult = tweetsTask.Result;
+            }
+            catch (Exception)
+            {
+                // Assuming connectivity or rate limit issue.
+                TwitterRateLimitHit = true;
 
-            return tweetsTask.Result;
+                if (TwitterRateLimitResetsOn <= dateTimeAccessor.Now)
+                    TwitterRateLimitResetsOn = dateTimeAccessor.Now.AddMinutes(10);
+            }
+
+            return tweetsResult;
         }
 
         #region | Private Methods |
