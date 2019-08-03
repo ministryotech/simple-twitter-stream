@@ -26,6 +26,14 @@ namespace Ministry.SimpleTwitterStream.Models
     public interface ITweetListBuilder
     {
         /// <summary>
+        /// Gets or sets the tweet count.
+        /// </summary>
+        /// <value>
+        /// The tweet count.
+        /// </value>
+        int TweetCount { get; set; }
+
+        /// <summary>
         /// Builds the twitter stream using twitter config data.
         /// </summary>
         /// <returns>
